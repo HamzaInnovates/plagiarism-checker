@@ -6,7 +6,6 @@ import tkinter
 from tkinter import messagebox
 from docx import Document
 import PyPDF2
-
 root = customtkinter.CTk()
 root.title("Plagiarism Checker")
 root.geometry("500x400+400+100")
