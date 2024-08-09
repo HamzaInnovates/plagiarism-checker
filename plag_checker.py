@@ -60,7 +60,6 @@ def read_file(file_path):
 # Preprocess text using spaCy
 def preprocess_text(text):
     doc = nlp(text)
-    # Remove stop words and punctuation, and lemmatize
     return ' '.join(token.lemma_ for token in doc if not token.is_stop and not token.is_punct)
 
 # Check plagiarism
@@ -80,7 +79,7 @@ def check_plag():
     except Exception as e:
         messagebox.showerror("Error", f"Due to {str(e)}, the file cannot be handled")
 
-# GUI setup
+#front end
 heading_lbl = customtkinter.CTkLabel(root, font=('american', 30, 'bold'), text="Plagiarism Checker", fg_color="Yellow", text_color="Black", corner_radius=30).place(relx=0.5, rely=0.2, anchor=tkinter.CENTER)
 buttons_frame = customtkinter.CTkFrame(root, height=250, width=400).place(relx=0.5, rely=0.6, anchor=tkinter.CENTER)
 choose_lbl = customtkinter.CTkLabel(buttons_frame, text="Choose both files to check the plagiarism", font=('american', 10, 'bold')).place(relx=0.5, rely=0.4, anchor=tkinter.CENTER)
