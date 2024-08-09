@@ -1,3 +1,4 @@
+import spacy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from customtkinter import filedialog
@@ -6,33 +7,40 @@ import tkinter
 from tkinter import messagebox
 from docx import Document
 import PyPDF2
+
+# Load spaCy model for text preprocessing
+nlp = spacy.load('en_core_web_sm')
+
 root = customtkinter.CTk()
 root.title("Plagiarism Checker")
 root.geometry("500x400+400+100")
 root.resizable(0,0)
 customtkinter.set_appearance_mode("dark")
 customtkinter.set_default_color_theme("dark-blue")
-#load first file
+
+# Load first file
 def loadfile1():
     try:
         global doc1
         file1 = filedialog.askopenfilename()
         if file1:
-            doc1 = read_file(file1)
+            doc1 = preprocess_text(read_file(file1))
             choosenlbl1.configure(text="File 1 chosen")
     except Exception as e:
         messagebox.showerror("Error", f"Unable to open the file: {str(e)}")
-#load second file
+
+# Load second file
 def loadfile2():
     try:
         global doc2
         file2 = filedialog.askopenfilename()
         if file2:
-            doc2 = read_file(file2)
+            doc2 = preprocess_text(read_file(file2))
             choosenlbl2.configure(text="File 2 chosen")
     except Exception as e:
         messagebox.showerror("Error", f"Unable to open the file: {str(e)}")
-#reading files
+
+# Read files
 def read_file(file_path):
     if file_path.endswith('.txt'):
         with open(file_path, 'r', encoding='utf-8') as file:
@@ -48,10 +56,17 @@ def read_file(file_path):
         return text
     else:
         messagebox.showerror("Error", "Unsupported file type.")
-#check plagiarism
+
+# Preprocess text using spaCy
+def preprocess_text(text):
+    doc = nlp(text)
+    # Remove stop words and punctuation, and lemmatize
+    return ' '.join(token.lemma_ for token in doc if not token.is_stop and not token.is_punct)
+
+# Check plagiarism
 def check_plag():
     try:
-        if choosenlbl1._text == "" or choosenlbl2._text == "":
+        if choosenlbl1.cget("text") == "" or choosenlbl2.cget("text") == "":
             messagebox.showerror("Error", "Please choose both files. Thank you!")
         else:
             doc_1_data = doc1
@@ -65,6 +80,7 @@ def check_plag():
     except Exception as e:
         messagebox.showerror("Error", f"Due to {str(e)}, the file cannot be handled")
 
+# GUI setup
 heading_lbl = customtkinter.CTkLabel(root, font=('american', 30, 'bold'), text="Plagiarism Checker", fg_color="Yellow", text_color="Black", corner_radius=30).place(relx=0.5, rely=0.2, anchor=tkinter.CENTER)
 buttons_frame = customtkinter.CTkFrame(root, height=250, width=400).place(relx=0.5, rely=0.6, anchor=tkinter.CENTER)
 choose_lbl = customtkinter.CTkLabel(buttons_frame, text="Choose both files to check the plagiarism", font=('american', 10, 'bold')).place(relx=0.5, rely=0.4, anchor=tkinter.CENTER)
